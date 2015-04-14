@@ -1,2 +1,2 @@
 # cookie-converter
-An recipe ingredients quantities converter focused on ease of use
+A recipe ingredients quantities converter focused on ease of use
