@@ -12,8 +12,8 @@ convertisseur avec la classe "cookie-converter"
 	body {
 		line-height: 25px;
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-		padding:3px;
-		max-width: 500px;
+		padding:1em;
+		max-width: 800px;
 		margin: auto;
 	}
 
@@ -21,6 +21,16 @@ convertisseur avec la classe "cookie-converter"
 		font-family: monospace;
 	}
 
+	@media screen and (min-width: 650px){
+		.cconv-block {
+			float:left;
+			width:45%;
+			box-sizing: border-box;
+		}
+		.cconv-block + .cconv-block {
+			margin-left:5%;
+		}
+	}
 </style>
 
 <h1>Exemple</h1>

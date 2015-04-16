@@ -85,3 +85,9 @@ cc.setLocale('dog')
 [Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and open index-fr.html in your browser.
 
 Check the [source](https://github.com/niahoo/cookie-converter/blob/master/example-fr.html) for basic french documentation.
+
+
+## Todo
+
+* Provide bootstrap support
+* English example
