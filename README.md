@@ -49,13 +49,13 @@ cc.setLocale('fr')
 
 ### Options
 
-Key           | Required | Default          | Description
-------------- | -------- | ---------------- | ---------------------------------
-el            | Yes      |                  | A CSS selector targetting the application container
-locale        | No       | `'en'`           | The application i18n locale
-recipe        | No       | `''`             | A `String` containing the recipe shown at page load
-minRecipeRows | No       | `5`              | The minimum rows of the input recipe `textarea` element
-convert       | No       | `{from:6, to:2}` | A javascript object specifying the initial values for quantity convertion at page load. You must provide both `from` and `to` propertyes.
+Key             | Required | Default          | Description
+--------------- | -------- | ---------------- | ---------------------------------
+`el`            | Yes      |                  | A CSS selector targetting the application container
+`locale`        | No       | `'en'`           | The application i18n locale
+`recipe`        | No       | `''`             | A `String` containing the recipe shown at page load
+`minRecipeRows` | No       | `5`              | The minimum rows of the input recipe `textarea` element
+`convert`       | No       | `{from:6, to:2}` | A javascript object specifying the initial values for quantity convertion at page load. You must provide both `from` and `to` propertyes.
 
 ### i18n
 
