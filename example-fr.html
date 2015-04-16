@@ -13,10 +13,8 @@ convertisseur avec la classe "cookie-converter"
 		line-height: 25px;
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		padding:3px;
-	}
-
-	.cookie-converter {
-		font-family: Georgia;
+		max-width: 500px;
+		margin: auto;
 	}
 
 	.cookie-converter .qtty {
@@ -26,6 +24,12 @@ convertisseur avec la classe "cookie-converter"
 </style>
 
 <h1>Exemple</h1>
+
+<p>
+	Ceci est un exemple d'intégration du convertisseur dans une page web. La
+	source commentée permet de comprendre le fonctionnement et de le reproduire
+	sur votre site web.
+</p>
 
 <!-- On définit un conteneur dans lequel l'application sera affichée. -->
 <div id="my-container"></div>
@@ -74,6 +78,27 @@ Pour la farce :\n\
 	})
 
 	// il est possible de changer la langue en utilisant setLocale(). Le fichier
-	// de langue doit être importé (cookie-converter-lc_en.js pour l'anglais par exemple)
+	// de langue doit être importé (cookie-converter-lc_en.js pour l'anglais par
+	// exemple)
+
 	// cc.setLocale('en')
+
+	// Il est possible de créer une nouvelle traduction en l'ajoutant au namespace
+	// CookieConverter.i18n sous une nouvelle clé et d'appeler setLocale() avec
+	// cette clé
+
+	;(function(){
+
+	var lc = window.CookieConverter.i18n.dog = {}
+
+	lc.ratio_from_before = "Woo Woo"
+	lc.ratio_from_after = "Wooof"
+	lc.ratio_more = "Woof !"
+	lc.ratio_to_before = "Wooo Woo"
+	lc.ratio_to_after = "Wooof"
+
+	}())
+
+	// cc.setLocale('dog')
+
 </script>
