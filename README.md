@@ -102,4 +102,3 @@ webpack --watch
 
 * Provide bootstrap support
 * English example
-https://github.com/niahoo/cookie-converter.git
