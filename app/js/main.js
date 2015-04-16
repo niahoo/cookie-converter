@@ -2,10 +2,7 @@ var Ractive = require('ractive')
 var extend = require('extend')
 require("cookie-converter.css");
 
-var CookieConverter = {}
-
-CookieConverter.i18n = {}
-
+var CookieConverter = {i18n:{}}
 
 var fracts = {
 	'1/2': 0.5,
@@ -48,14 +45,56 @@ function defaultOpts() {
 	}
 }
 
+// Replace all the numbers by template keys
+function makesourceConf(recipe) {
+	var keyID = 0
+	var sourceValues = {}
+	// parse some cooking formatted numbers like 1/2 instead of 0.5
+	var template = Object.keys(fracts).reduce(function(template,frac){
+		return template.replace(frac,fracts[frac])
+	},
+	recipe) // <-- send recipe here
+	.replace(/\n/g,'<br/>')
+	.replace(/[0-9\.]+/g, function(value){
+		if (Number(value) != value) return value
+		var key = '_' + keyID
+		sourceValues[key] = {
+			value:value,
+			convert:true
+		}
+		keyID += 1
+		// the toggle is handled directly in the on-cick via a 'method' call
+		// and not a proxied event
+		return (
+			'<span class="qtty {{ vals.__KEY__.convert ? \'on\' : \'off\' }}" \
+				on-click="toggle(\'vals.__KEY__.convert\')">\
+				{{converted.__KEY__}}\
+			</span>'.replace(/__KEY__/g, key)
+		)
+	})
+	return {
+		template:template,
+		vals:sourceValues
+	}
+}
+
+function selectToInputObserver(ractive, key, customKey, selector) {
+	ractive.observe(key, function(newValue, oldValue, keypath){
+		if (newValue > 10 && ! ractive.get(customKey)) {
+			ractive.set(customKey, true).then(function(){
+				var input = ractive.find(selector)
+				input.focus()
+				input.select()
+			})
+		}
+	})
+}
+
 CookieConverter.create = function(_opts){
-	console.log('creating')
 
 	var opts = extend(defaultOpts(),_opts)
 
 	opts.recipeRows = opts.recipe.split('\n').length
-
-	console.log('opts',opts)
 
 	// get the localized strings (and maybe funs)
 	var langStrs = CookieConverter.i18n[opts.locale]
@@ -84,8 +123,6 @@ CookieConverter.create = function(_opts){
 		partials:{'0':''},
 		setLocale: function(lc) {
 			var langStrs = CookieConverter.i18n[lc]
-			console.log('change lang', lc, langStrs)
-			cconv.set('lc', langStrs)
 		}
 	})
 
@@ -106,66 +143,27 @@ CookieConverter.create = function(_opts){
 
 	// Once we set "More" (== 11) as a value for a ration, we set this ratio as
 	// "custom", an text <input/> is subtitued to the <select/>
-	cconv.observe('convertTo', function(newValue, oldValue, keypath){
-		if (newValue > 10) this.set('customConvertTo', true)
-	})
-	cconv.observe('convertFrom', function(newValue, oldValue, keypath){
-		if (newValue > 10) this.set('customConvertFrom', true)
-	})
+	// Then the input is focused. We do this only once so we check if
+	// customConvert(From|To) are not already set
+
+	selectToInputObserver(cconv, 'convertFrom', 'customConvertFrom', '.recipe-source .ratio')
+	selectToInputObserver(cconv, 'convertTo', 'customConvertTo', '.recipe-converted .ratio')
 
 	// when the user input changes, we call makesourceConf to gather the new
 	// values and compile a new partial
 	cconv.observe('recipe',function(recipe){
 		var sourceConf = makesourceConf(recipe)
-		// partials are cached so we need to increment the key to get a new key
+		// partials are cached so we need to increment the key to register a new
+		// partial
 		var pk = this.get('partialKey') + 1
 		this.partials[String(pk)] = sourceConf.template
 		var rows = recipe.split('\n').length
 		this.set({
-			partialKey: pk,
+			partialKey: pk, // point the key used to find the partial to the new key
 			vals: sourceConf.vals,
 			recipeRows: Math.max(rows, opts.minRecipeRows)
 		})
 	})
-
-	cconv.on('changeRatio', function(event, which,val){
-		// we set the ratio part defined by <which>
-		var key = ({to:'convertTo',from:'convertFrom'})[which]
-		this.set(key,val)
-	})
-
-	// Replace all the numbers by template keys
-	function makesourceConf(recipe) {
-		var keyID = 0
-		var sourceValues = {}
-		// parse some cooking formatted numbers like 1/2 instead of 0.5
-		var template = Object.keys(fracts).reduce(function(template,frac){
-			return template.replace(frac,fracts[frac])
-		},
-		recipe) // <-- send recipe here
-		.replace(/\n/g,'<br/>')
-		.replace(/[0-9\.]+/g, function(value){
-			if (Number(value) != value) return value
-			var key = '_' + keyID
-			sourceValues[key] = {
-				value:value,
-				convert:true
-			}
-			keyID += 1
-			// the toggle is handled directly in the on-cick via a 'method' call
-			// and not a proxied event
-			return (
-				'<span class="qtty {{ vals.__KEY__.convert ? \'on\' : \'off\' }}" \
-					on-click="toggle(\'vals.__KEY__.convert\')">\
-					{{converted.__KEY__}}\
-				</span>'.replace(/__KEY__/g, key)
-			)
-		})
-		return {
-			template:template,
-			vals:sourceValues
-		}
-	}
 
 	// we return the ractive instance, free for use !
 	return cconv

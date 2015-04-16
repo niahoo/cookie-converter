@@ -86,8 +86,20 @@ cc.setLocale('dog')
 
 Check the [source](https://github.com/niahoo/cookie-converter/blob/master/example-fr.html) for basic french documentation.
 
+### Build
+
+The application is built with nodejs and [Webpack](http://webpack.github.io/docs/).
+
+```bash
+git clone https://github.com/niahoo/cookie-converter.git cconv
+cd cconv
+npm install -g webpack
+npm install
+webpack --watch
+```
 
 ## Todo
 
 * Provide bootstrap support
 * English example
+https://github.com/niahoo/cookie-converter.git

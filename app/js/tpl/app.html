@@ -1,5 +1,5 @@
 <div class="cookie-converter">
-	<div class="cconv-block">
+	<div class="cconv-block recipe-source">
 		<p>
 			{{ lc.ratio_from_before }}
 			{{#if !!!customConvertFrom}}
@@ -16,7 +16,7 @@
 		</p>
 		<textarea class="recipe" value="{{recipe}}" rows="{{ recipeRows }}"></textarea>
 	</div>
-	<div class="cconv-block">
+	<div class="cconv-block recipe-converted">
 		<p>
 			{{ lc.ratio_to_before }}
 			{{#if !!!customConvertTo}}
