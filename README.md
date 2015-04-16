@@ -1,10 +1,10 @@
-# cookie-converter
+# Cookie Converter
 
-A recipe ingredients quantities converter focused on ease of use
+A recipe ingredients quantities converter focused on ease of use.
 
 ## Documentation
 
-Please refer to the example for french docs.
+You may read the example section below for the documentation in French language.
 
 ### Install
 
