@@ -8,20 +8,20 @@ Please refer to the example for french docs.
 
 ### Install
 
-[Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and include the scripts in your page :
+[Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and include the scripts in your page.
 
 ```html
-<script src="dist/cookie-converter.js" type="text/javascript" charset="utf-8"></script>
-<script src="dist/cookie-converter-lc_en.js" type="text/javascript" charset="utf-8"></script>
+<script src="cookie-converter.js" type="text/javascript" charset="utf-8"></script>
+<script src="cookie-converter-lc_en.js" type="text/javascript" charset="utf-8"></script>
 ```
 
-Define a container :
+Then, define a container.
 
 ```html
 <div id="cookieconv"></div>
 ```
 
-Some basic CSS is defined for you automatically, but you can target the converter elements with the "cookie-converter" class :
+Some basic CSS is defined for you automatically, but you can target the converter elements with the `.cookie-converter` CSS selector.
 
 ```html
 <style type="text/css">
@@ -31,7 +31,9 @@ Some basic CSS is defined for you automatically, but you can target the converte
 </style>
 ```
 
-Finally, call `CookieConverter.create()` with some options to launch the app.
+### Run
+
+Just call `CookieConverter.create()` with some options to launch the app. Check the available options further in this document.
 
 ```javascript
 var cc = CookieConverter.create({
@@ -45,9 +47,19 @@ It is also possible to change the locale at runtime with the setLocale method.
 cc.setLocale('fr')
 ```
 
-To create a new traduction, just define a new key into CookieConverter.i18n and
-then call setLocale(key) with this key. There are only a few keys at the moment.
-Feel free to submit your lang file in a pull-request.
+### Options
+
+Key           | Required | Default          | Description
+------------- | -------- | ---------------- | ---------------------------------
+el            | Yes      |                  | A CSS selector targetting the application container
+locale        | No       | `'en'`           | The application i18n locale
+recipe        | No       | `''`             | A `String` containing the recipe shown at page load
+minRecipeRows | No       | `5`              | The minimum rows of the input recipe `textarea` element
+convert       | No       | `{from:6, to:2}` | A javascript object specifying the initial values for quantity convertion at page load. You must provide both `from` and `to` propertyes.
+
+### i18n
+
+To create a new traduction, just define a new key into CookieConverter.i18n and then call setLocale(key) with this key. There are only a few keys at the moment. Feel free to submit your lang file in a pull-request.
 
 ```javascript
 // Define a locale module
