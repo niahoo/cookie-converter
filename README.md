@@ -8,7 +8,7 @@ You may read the example section below for the documentation in French language.
 
 ### Install
 
-[Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and include the scripts in your page.
+[Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and include the scripts from the `dist` directory in your page.
 
 ```html
 <script src="cookie-converter.js" type="text/javascript" charset="utf-8"></script>
