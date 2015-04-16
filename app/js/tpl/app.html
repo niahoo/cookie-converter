@@ -1,0 +1,33 @@
+<div class="cookie-converter">
+		<p>
+			{{ lc.ratio_from_before }}
+			{{#if !!!customConvertFrom}}
+			<select class="ratio" value='{{ convertFrom }}'>
+				{{#each [1,2,3,4,5,6,7,8,9,10]}}
+					<option>{{.}}</option>
+				{{/each}}
+				<option value="11">{{ lc.ratio_more }}</option>
+			</select>
+			{{else}}
+				<input class="ratio" type="text" value='{{ convertFrom }}' />
+			{{/if}}
+			{{ lc.ratio_from_after }} :
+		</p>
+		<textarea class="recipe" value="{{recipe}}" rows="{{ recipeRows }}"></textarea>
+		<p>
+			{{ lc.ratio_to_before }}
+			{{#if !!!customConvertTo}}
+			<select class="ratio" value='{{ convertTo }}'>
+				{{#each [1,2,3,4,5,6,7,8,9,10]}}
+					<option>{{.}}</option>
+				{{/each}}
+				<option value="11">{{ lc.ratio_more }}</option>
+			</select>
+			{{else}}
+				<input class="ratio" type="text" value='{{ convertTo }}' />
+			{{/if}}
+			{{ lc.ratio_to_after }} :
+		</p>
+		<div class="converted">
+		{{>getRecipePartial()}}
+		</div>

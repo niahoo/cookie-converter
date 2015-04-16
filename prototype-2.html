@@ -4,7 +4,7 @@
 
 	<style type="text/css">
 
-		.cookie-converter {
+		body {
 			line-height: 25px;
 			font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 			padding:3px;
@@ -14,7 +14,11 @@
 			min-width:90%;
 		}
 
-		.converted span {
+		.cookie-converter .ratio {
+			max-width: 50px;
+		}
+
+		.cookie-converter .converted span {
 			cursor:pointer;
 			padding:1px;
 			background:#eee;
@@ -26,12 +30,12 @@
 			border-right:1px solid #ccc;
 		}
 
-		.converted span:active {
+		.cookie-converter .converted span:active {
 			position:relative; top:1px;
 			border-bottom-width:2px;
 		}
 
-		.converted .on {
+		.cookie-converter .converted .on {
 			background:#D6ED90;
 			border-color:#BED56A;
 			border-top-color:transparent;
@@ -48,21 +52,31 @@
 	<div class="cookie-converter">
 		<p>
 			Recette pour
+			{{#if !!!customConvertFrom}}
 			<select class="ratio" value='{{ convertFrom }}'>
 				{{#each [1,2,3,4,5,6,7,8,9,10]}}
 					<option>{{.}}</option>
 				{{/each}}
+				<option value="11">Plus</option>
 			</select>
+			{{else}}
+				<input class="ratio" type="text" value='{{ convertFrom }}' />
+			{{/if}}
 			personnes :
 		</p>
 		<textarea class="recipe" value="{{recipe}}" rows="{{ recipeRows }}"></textarea>
 		<p>
 			Convertie pour
+			{{#if !!!customConvertTo}}
 			<select class="ratio" value='{{ convertTo }}'>
 				{{#each [1,2,3,4,5,6,7,8,9,10]}}
 					<option>{{.}}</option>
 				{{/each}}
+				<option value="11">Plus</option>
 			</select>
+			{{else}}
+				<input class="ratio" type="text" value='{{ convertTo }}' />
+			{{/if}}
 			personnes :
 		</p>
 		<div class="converted">
@@ -70,7 +84,8 @@
 		</div>
 </script>
 
-<script src='//cdn.ractivejs.org/latest/ractive.min.js'></script>
+<!-- <script src='//cdn.ractivejs.org/latest/ractive.min.js'></script> -->
+<script src='ractive.min.js'></script>
 
 <script>
 
@@ -112,6 +127,8 @@
 			converted: {}, // contains only the converted values, keys match .vals keys
 			convertFrom: conf.convert.from,
 			convertTo: conf.convert.to,
+			customConvertTo: false,
+			customConvertFrom: false,
 			recipeTemplate: '',
 			getRecipePartial: function(){
 				return String(this.get('partialKey'))
@@ -134,6 +151,15 @@
 				: cookingFormat(inf.value)
 			return converted
 		},{}))
+	})
+
+	// Once we set "More" (== 11) as a value for a ration, we set this ratio as
+	// "custom", an text <input/> is subtitued to the <select/>
+	source.observe('convertTo', function(newValue, oldValue, keypath){
+		if (newValue > 10) this.set('customConvertTo', true)
+	})
+	source.observe('convertFrom', function(newValue, oldValue, keypath){
+		if (newValue > 10) this.set('customConvertFrom', true)
 	})
 
 	// when the user input changes, we call makesourceConf to gather the new
@@ -184,8 +210,6 @@
 				</span>'.replace(/__KEY__/g, key)
 			)
 		})
-		console.log('partial',recipe)
-		console.log('partial',template)
 		return {
 			template:template,
 			vals:sourceValues

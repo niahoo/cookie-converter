@@ -1,0 +1,79 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Cookie Converter</title>
+
+<!--
+Les styles fournis avec l'application sont minimalistes, les styles de votre
+page s'appliqueront donc au convertisseur. Il est possible de cibler le
+convertisseur avec la classe "cookie-converter"
+-->
+<style type="text/css">
+
+	body {
+		line-height: 25px;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		padding:3px;
+	}
+
+	.cookie-converter {
+		font-family: Georgia;
+	}
+
+	.cookie-converter .qtty {
+		font-family: monospace;
+	}
+
+</style>
+
+<h1>Exemple</h1>
+
+<!-- On définit un conteneur dans lequel l'application sera affichée. -->
+<div id="my-container"></div>
+
+<!-- Inclusion du script principal, le CSS est inclus -->
+<script src="dist/cookie-converter.js" type="text/javascript" charset="utf-8"></script>
+
+<!--
+Inclusion du fichier de langue en français.
+Il est possible d'inclure plusieurs langues
+-->
+<script src="dist/cookie-converter-lc_fr.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/cookie-converter-lc_en.js" type="text/javascript" charset="utf-8"></script>
+
+<!--
+Enfin, on peut invoquer le convertisseur en spécifiant l'élement conteneur et
+une recette par défaut
+-->
+<script type="text/javascript">
+	var cc = CookieConverter.create({
+
+		// élement conteneur, obligatoire
+		el: '#my-container',
+
+		// Langue utilisée par l'application, facultatif (défault='en')
+		locale: 'fr',
+
+		// recette affichée au démarrage, facultatif (default='')
+		// Crédits recette : http://www.marmiton.org/recettes/recette_cornes-de-gazelle_22707.aspx
+		recipe:
+"Cornes de gazelle\n\
+800 g de farine\n\
+300 g de beurre\n\
+1 blanc d'oeuf\n\
+10 cl d'eau de fleur d'oranger\n\
+1 pincée de sel\n\
+\n\
+Pour la farce :\n\
+1 kg de poudre d'amandes\n\
+320 g de sucre en poudre\n\
+1 cuillère à soupe de miel (liquide\n\
+1/3 cuillère à café de muscade\n\
+1/2 cuillère à café de cannelle\n\
+10 g de beurre\n\
+10 cl d'eau de fleur d'oranger\n"
+	})
+
+	// il est possible de changer la langue en utilisant setLocale(). Le fichier
+	// de langue doit être importé (cookie-converter-lc_en.js pour l'anglais par exemple)
+	// cc.setLocale('en')
+</script>

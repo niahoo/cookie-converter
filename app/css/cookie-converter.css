@@ -1,0 +1,30 @@
+.cookie-converter textarea {
+	min-width:90%;
+}
+
+.cookie-converter .ratio {
+	max-width: 50px;
+}
+
+.cookie-converter .converted span {
+	cursor:pointer;
+	padding:1px;
+	background:#eee;
+
+	border-radius:3px;
+	border-top:0px solid transparent;
+	border-bottom:3px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right:1px solid #ccc;
+}
+
+.cookie-converter .converted span:active {
+	position:relative; top:1px;
+	border-bottom-width:2px;
+}
+
+.cookie-converter .converted .on {
+	background:#D6ED90;
+	border-color:#BED56A;
+	border-top-color:transparent;
+}
