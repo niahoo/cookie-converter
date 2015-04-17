@@ -4,7 +4,7 @@ A recipe ingredients quantities converter focused on ease of use.
 
 ## Documentation
 
-You may read the example section below for the documentation in French language.
+You may read the example section below for basic documentation in French language.
 
 ### Install
 
@@ -21,23 +21,14 @@ Then, define a container.
 <div id="cookieconv"></div>
 ```
 
-Some basic CSS is defined for you automatically, but you can target the converter elements with the `.cookie-converter` CSS selector.
-
-```html
-<style type="text/css">
-	.cookie-converter .qtty {
-		font-family: monospace;
-	}
-</style>
-```
-
 ### Run
 
 Just call `CookieConverter.create()` with some options to launch the app. Check the available options further in this document.
 
 ```javascript
 var cc = CookieConverter.create({
-	el: '#cookieconv'
+	el: '#cookieconv',
+	locale: 'en' // tip : 'en' is in fact the defaut value, just skip it !
 })
 ```
 
@@ -47,7 +38,36 @@ It is also possible to change the locale at runtime with the setLocale method.
 cc.setLocale('fr')
 ```
 
-### Options
+### Styling
+
+The converter is wrapped into the container you provide, and then re-wrapped in a `div.cookie-converter`. The two parts of the application (source recipe and converted recipe, with their relative servings dropdowns) are wrapped in a `div.cconv-block`. Check the [main template](https://github.com/niahoo/cookie-converter/blob/master/app/js/tpl/app.html) for more informations about structure.
+
+Some basic CSS is defined for you automatically to create buttons on quantities.
+
+```html
+<style type="text/css">
+
+	/* Some font style on quantities buttons */
+	.cookie-converter .qtty {
+		font-family: monospace;
+	}
+
+	/* Show the thow recipe blocks side by side with a responsive min-width */
+	@media screen and (min-width: 650px){
+		.cconv-block {
+			float:left;
+			width:45%;
+			box-sizing: border-box;
+		}
+		.cconv-block + .cconv-block {
+			margin-left:5%;
+		}
+	}
+
+</style>
+```
+
+### Config options
 
 Key             | Required | Default          | Description
 --------------- | -------- | ---------------- | ---------------------------------
@@ -55,14 +75,14 @@ Key             | Required | Default          | Description
 `locale`        | No       | `'en'`           | The application i18n locale
 `recipe`        | No       | `''`             | A `String` containing the recipe shown at page load
 `minRecipeRows` | No       | `5`              | The minimum rows of the input recipe `textarea` element
-`convert`       | No       | `{from:6, to:2}` | A javascript object specifying the initial values for quantity convertion at page load. You must provide both `from` and `to` propertyes.
+`convert`       | No       | `{from:6, to:2}` | A javascript object specifying the initial values for quantity convertion at page load. You must provide both `from` and `to` properties.
 
 ### i18n
 
-To create a new traduction, just define a new key into CookieConverter.i18n and then call setLocale(key) with this key. There are only a few keys at the moment. Feel free to submit your lang file in a pull-request.
+To create a new traduction, just define a new key into the `CookieConverter.i18n` namespace and then call `.setLocale(key)` with this key or create a fresh converter. There are only a few defined entries at the moment. Feel free to submit your lang file in a pull-request.
 
 ```javascript
-// Define a locale module
+// Define a locale module on the fly
 ;(function(){
 
 var lc = window.CookieConverter.i18n.dog = {}
@@ -76,8 +96,10 @@ lc.ratio_to_after = "Wooof"
 }())
 
 // Into parent app scope
-cc.setLocale('dog')
-
+var cc = CookieConverter.create({
+	el: '#cookieconv',
+	locale: 'dog'
+})
 ```
 
 ## Example (French only ATM)

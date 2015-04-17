@@ -27,7 +27,6 @@ module.exports = {
 			{ test: /\.html$/, exclude: /node_modules/, loader: 'ractive', query: { type: 'none' } }
 		],
 		loaders: [
-			{ test: /\.js|\.tag$/, exclude: /node_modules/, loader: 'babel-loader'},
 			{ test: /\.css$/, loader: "style-loader!css-loader" }
 		]
 	},

@@ -1,0 +1,36 @@
+{
+  "name": "cookie-converter",
+  "version": "1.0.0",
+  "description": "A simple recipe quantities converter",
+  "main": "app/js/main.js",
+  "dependencies": {
+    "extend": "^2.0.0",
+    "ractive": "^0.7.2"
+  },
+  "devDependencies": {
+    "css-loader": "^0.10.1",
+    "dotenv": "^1.1.0",
+    "ractive-loader": "^0.5.6",
+    "style-loader": "^0.10.2",
+    "webpack": "^1.8.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://niahoo@github.com/niahoo/cookie-converter.git"
+  },
+  "keywords": [
+    "converter",
+    "recipe",
+    "cooking",
+    "ractive"
+  ],
+  "author": "niahoo osef <dev@ooha.in>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/niahoo/cookie-converter/issues"
+  },
+  "homepage": "https://github.com/niahoo/cookie-converter"
+}
