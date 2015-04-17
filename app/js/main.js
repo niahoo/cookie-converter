@@ -6,6 +6,7 @@ var CookieConverter = {i18n:{}}
 
 var fracts = {
 	'1/2': 0.5,
+	'\u00BD': 0.5, // ½ unicode
 	'1/3': 0.33,
 	'2/3': 0.67,
 	'1/4': 0.25,
@@ -51,7 +52,7 @@ function makesourceConf(recipe) {
 	var sourceValues = {}
 	// parse some cooking formatted numbers like 1/2 instead of 0.5
 	var template = Object.keys(fracts).reduce(function(template,frac){
-		return template.replace(frac,fracts[frac])
+		return template.replace(new RegExp(frac, 'g'),fracts[frac])
 	},
 	recipe) // <-- send recipe here
 	.replace(/\n/g,'<br/>')
