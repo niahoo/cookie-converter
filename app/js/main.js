@@ -57,7 +57,7 @@ function makesourceConf(recipe) {
 	// nl2br
 	.replace(/\n/g,'<br/>')
 	// comma decimals (french, ...) to point decimals
-	.replace(/([0-9]),([0-9])/,function(_,left,right){
+	.replace(/([0-9]),([0-9])/g,function(_,left,right){
 		return left + '.' + right 
 	})
 	// set template placeholders
