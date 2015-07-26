@@ -53,9 +53,14 @@ function makesourceConf(recipe) {
 	// parse some cooking formatted numbers like 1/2 instead of 0.5
 	var template = Object.keys(fracts).reduce(function(template,frac){
 		return template.replace(new RegExp(frac, 'g'),fracts[frac])
-	},
-	recipe) // <-- send recipe here
+	}, recipe)
+	// nl2br
 	.replace(/\n/g,'<br/>')
+	// comma decimals (french, ...) to point decimals
+	.replace(/([0-9]),([0-9])/,function(_,left,right){
+		return left + '.' + right 
+	})
+	// set template placeholders
 	.replace(/[0-9\.]+/g, function(value){
 		if (Number(value) != value) return value
 		var key = '_' + keyID
