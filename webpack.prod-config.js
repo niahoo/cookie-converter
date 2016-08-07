@@ -1,8 +1,7 @@
 var webpack = require("webpack")
 var dotenv = require('dotenv')
 
-dotenv.load()
-console.log('APP_DEBUG=', process.env.APP_DEBUG)
+process.env.APP_ENV = 'production'
 
 function env(x) {
 	return process.env[x]
@@ -19,7 +18,7 @@ module.exports = {
 		"cookie-converter-lc_en": appfile("js/lc/en.js")
 	},
 	output: {
-		path: "dist",
+		path: "dist/cookie-converter",
 		filename: "[name].js"
 	},
 	module: {
@@ -27,6 +26,7 @@ module.exports = {
 			{ test: /\.html$/, exclude: /node_modules/, loader: 'ractive', query: { type: 'none' } }
 		],
 		loaders: [
+			{ test: /\.js$/, loader: "transform?envify" },
 			{ test: /\.css$/, loader: "style-loader!css-loader" }
 		]
 	},
@@ -34,7 +34,7 @@ module.exports = {
 	resolve: {
 		modulesDirectories: ['app/js','app/css','node_modules']
 	},
-	devtool: process.env.APP_DEBUG ? '#eval-source-map' : this.undefined,
+	devtool: '#eval-source-map',
 	plugins: [
 		new webpack.optimize.OccurenceOrderPlugin(true),
 		new webpack.optimize.UglifyJsPlugin({minimize: true}),

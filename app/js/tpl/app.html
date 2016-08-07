@@ -15,6 +15,7 @@
 			{{ lc.ratio_from_after }} :
 		</p>
 		<textarea class="recipe" value="{{recipe}}" rows="{{ recipeRows }}"></textarea>
+		<p><a href="{{permalink}}">{{ lc.permalink }}</a> <small><button on-click="copyPermalink()" href="#">{{lc.copy_permalink}}</button></small></p>
 	</div>
 	<div class="cconv-block recipe-converted">
 		<p>

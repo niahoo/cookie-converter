@@ -1,8 +1,26 @@
+'use strict'
+
 var Ractive = require('ractive')
 var extend = require('extend')
 require("cookie-converter.css");
 
-var CookieConverter = {i18n:{}}
+if ('production' === process.env.APP_ENV) {
+	Ractive.DEBUG = false
+}
+
+function base64Encode(str) {
+	return window.btoa(unescape(encodeURIComponent(str)));
+}
+
+function base64Decode(str) {
+	return decodeURIComponent(escape(window.atob(str)));
+}
+
+var CookieConverter = {
+	i18n:{},
+	base64Encode: base64Encode,
+	base64Decode: base64Decode,
+}
 
 var fracts = {
 	'1/2': 0.5,
@@ -58,7 +76,7 @@ function makesourceConf(recipe) {
 	.replace(/\n/g,'<br/>')
 	// comma decimals (french, ...) to point decimals
 	.replace(/([0-9]),([0-9])/g,function(_,left,right){
-		return left + '.' + right 
+		return left + '.' + right
 	})
 	// set template placeholders
 	.replace(/[0-9\.]+/g, function(value){
@@ -96,6 +114,42 @@ function selectToInputObserver(ractive, key, customKey, selector) {
 	})
 }
 
+/**
+ * Replace the current url hash with text encoded with base 64
+ */
+function makePermalink(recipe) {
+	if (process.env.APP_ENV !== 'production') console.log('make permalink for %s', recipe)
+	var link = (
+		window.location.href.replace(/#.*/, '') // remove any existing hash
+		+ '#'
+		+ base64Encode(recipe)
+	)
+	if (process.env.APP_ENV !== 'production') console.log(' = %s', link)
+	return link
+}
+
+function escapeHtml(html) {
+	return html
+		.replace(/</g, '〈')
+		.replace(/>/g, '〉')
+}
+
+CookieConverter.getHashRecipe = function(defaultRecipe) {
+	if (window.location.hash.length) {
+		try {
+			var captures = /#(.+)/.exec(window.location.hash)
+			if (captures !== null) {
+				return CookieConverter.base64Decode(captures[1])
+			}
+		} catch (e) {
+			console.error(e)
+		}
+	}
+	return defaultRecipe
+}
+
+
+
 CookieConverter.create = function(_opts){
 
 	var opts = extend(defaultOpts(),_opts)
@@ -105,11 +159,16 @@ CookieConverter.create = function(_opts){
 	// get the localized strings (and maybe funs)
 	var langStrs = CookieConverter.i18n[opts.locale]
 
+	var recipe = opts.recipe
+	console.log('recipe : \n%s', recipe)
+	var recipe = escapeHtml(recipe)
+	console.log('html entities encoded recipe : \n%s', recipe)
+
 	var cconv = new Ractive({
 		el: opts.el,
 		template: require('tpl/app.html'),
 		data: {
-			recipe: opts.recipe,
+			recipe: recipe,
 			recipeRows: opts.recipeRows,
 			// vals contains objects containing the source values and a "convert" propery meaning if we should convert each value
 			vals: {},
@@ -128,8 +187,14 @@ CookieConverter.create = function(_opts){
 		},
 		partials:{'0':''},
 		setLocale: function(lc) {
-			var langStrs = CookieConverter.i18n[lc]
-		}
+			this.set('lc', CookieConverter.i18n[lc])
+		},
+		copyPermalink: function() {
+			var lc = this.get('lc')
+			var prompt = lc.permalink_copy_prompt
+			var permalink = this.get('permalink')
+			window.prompt(prompt, permalink)
+		},
 	})
 
 
@@ -157,19 +222,23 @@ CookieConverter.create = function(_opts){
 
 	// when the user input changes, we call makesourceConf to gather the new
 	// values and compile a new partial
-	cconv.observe('recipe',function(recipe){
+	cconv.observe('recipe', function(recipe){
+		if (process.env.APP_ENV !== 'production') console.log('recipe changed : %s', recipe)
 		var sourceConf = makesourceConf(recipe)
 		// partials are cached so we need to increment the key to register a new
 		// partial
 		var pk = this.get('partialKey') + 1
+		this.partials = {} // remove partials but we still need an incremented key.
 		this.partials[String(pk)] = sourceConf.template
 		var rows = recipe.split('\n').length
 		this.set({
 			partialKey: pk, // point the key used to find the partial to the new key
 			vals: sourceConf.vals,
-			recipeRows: Math.max(rows, opts.minRecipeRows)
+			recipeRows: Math.max(rows, opts.minRecipeRows),
+			permalink: makePermalink(recipe)
 		})
 	})
+
 
 	// we return the ractive instance, free for use !
 	return cconv

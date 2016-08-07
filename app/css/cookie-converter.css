@@ -28,3 +28,8 @@
 	border-color:#BED56A;
 	border-top-color:transparent;
 }
+
+.cookie-converter .permalink {
+	margin:0;
+	color:grey;
+}
