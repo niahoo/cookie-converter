@@ -34,7 +34,7 @@ module.exports = {
 	resolve: {
 		modulesDirectories: ['app/js','app/css','node_modules']
 	},
-	devtool: '#eval-source-map',
+	devtool: void 0,
 	plugins: [
 		new webpack.optimize.OccurenceOrderPlugin(true),
 		new webpack.optimize.UglifyJsPlugin({minimize: true}),
