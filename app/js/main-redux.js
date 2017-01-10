@@ -14,15 +14,16 @@ function defaultState() {
 	return {
 		convert: {from:6, to:2},
 		el: '#cookie-converter',
+		lc: {},
 		locale: 'en',
 		minRecipeRows: 5,
 		recipe: "",
+		recipeBlocks: [],
 	}
 }
 
 function reducer(state, action) {
 	let { type } = action
-	console.log(JSON.stringify(action, 0, '  '))
 	if (action && reducers[type]) {
 		return reducers[type](state, action)
 	} else {
@@ -34,19 +35,10 @@ function reducer(state, action) {
 }
 
 function makeStore(state) {
-	let english = CookieConverter.i18n['en']
-	// parse the original recipe
-	let recipeBlocks = parseRecipe(state.recipe)
-	let initialState = xtend({}, state, {
-		// set the locale
-		lc: xtend(english, CookieConverter.i18n[state.locale]),
-		recipeBlocks,
-	})
-	console.log(initialState)
 	let devtools = !!window.__REDUX_DEVTOOLS_EXTENSION__
 		? window.__REDUX_DEVTOOLS_EXTENSION__()
 		: void 0
-	return createStore(reducer, initialState, devtools)
+	return createStore(reducer, state, devtools)
 }
 
 // -- View --------------------------------------------------------------------
@@ -54,23 +46,23 @@ function makeStore(state) {
 const RecipeConverted = connect(
 	state => state, // mapStateToProps,
 	dispatch => ({
-		// changeConvertFrom: val => dispatch(actions.changeConvertFrom(val)),
-		// changeConvertTo: val => dispatch(actions.changeConvertTo(val)),
+		toggleNumberConvert: index => dispatch(actions.toggleNumberConvert(index)),
 	}) // mapDispatchToProps,
 )(
 	class RecipeConverted_In extends Component {
 
-		renderBlock(block) {
-			let { from, to } = this.props.convert
+		renderBlock(block, index) {
+			let { convert, toggleNumberConvert } = this.props
+			let { from, to } = convert
 			if (block.t === 'var') {
 				let { n, convert } = block
 				let number = cookingFormat(convert ? ratio(n, from, to) : n)
 				return (
 					<span
 						className={'var ' + (convert ? 'on' : 'off')}
-						onClick={() => console.log('clicked', this)}>
-							{number}
-						</span>
+						onClick={() => toggleNumberConvert(index)}>
+						{number}
+					</span>
 				)
 			} else {
 				let { txt } = block
@@ -99,6 +91,7 @@ const View = connect(
 	dispatch => ({
 		changeConvertFrom: val => dispatch(actions.changeConvertFrom(val)),
 		changeConvertTo: val => dispatch(actions.changeConvertTo(val)),
+		updateRecipe: val => dispatch(actions.updateRecipe(val)),
 	}) // mapDispatchToProps,
 )(
 	class Top extends Component {
@@ -111,7 +104,7 @@ const View = connect(
 		}
 
 		formatNumberPicker(value, onChange){
-			let { lc } = this.props
+			let lc = getLc(this.props.locale)
 			if (value <= 10 && !this.state.customInputRatio) {
 				return (
 					<select onChange={onChange}>
@@ -135,9 +128,6 @@ const View = connect(
 
 		maybeActivateCustomRatio(value, el) {
 			let { customInputRatio } = this.state
-			console.log('value', value)
-			console.log('value > 10', value > 10)
-			console.log('!customInputRatio', !customInputRatio)
 			let parent = el.parentNode
 			if (Number(value) > 10 && !customInputRatio){
 				this.setState({customInputRatio: true}, () => {
@@ -157,11 +147,12 @@ const View = connect(
 				changeConvertFrom,
 				changeConvertTo,
 				convert,
-				lc,
+				locale,
 				recipe,
 				recipeRows,
+				updateRecipe,
 			} = this.props
-			console.log('this.state', this.state)
+			let lc = getLc(locale)
 			let permalink = makePermalink(this.props)
 			let permalinkEvt = linkEvent({permalink, lc}, this.copyPermalink)
 			let self = this
@@ -175,6 +166,7 @@ const View = connect(
 				self.maybeActivateCustomRatio(val, inputEl)
 				changeConvertTo(val)
 			})
+			let updateRecipeEvt = inputEvt(updateRecipe)
 			return (
 			<div className="cookie-converter">
 				<div className="cconv-block recipe-source">
@@ -185,6 +177,7 @@ const View = connect(
 					</label>
 					<textarea
 						className="recipe"
+						onInput={updateRecipeEvt}
 						rows={this.recipeRows(recipe)}>{recipe}</textarea>
 					<p>
 						<a href={permalink}>{lc.permalink}</a>
@@ -208,11 +201,23 @@ const View = connect(
 	}
 )
 
+function renderConverter(store) {
+	let el = selectEl(store.getState().el)
+	Inferno.render(
+		<Provider store={store}>
+			<View />
+		</Provider>,
+		el
+	)
+}
+
 // -- Logic -------------------------------------------------------------------
 
 const actions = {
 	changeConvertFrom: (x) => ({type: 'C_CHANGE_CONVERT_FROM', value: x}),
 	changeConvertTo: (x) => ({type: 'C_CHANGE_CONVERT_TO', value: x}),
+	toggleNumberConvert: (x) => ({type: 'C_TOGGLE_NUMBER_CONVERT', index: x}),
+	updateRecipe: (x) => ({type: 'C_UPDATE_RECIPE', recipe: x}),
 }
 
 const reducers = {
@@ -226,20 +231,66 @@ const reducers = {
 		convert = {...convert, to: ensureNumber(value, defaultState().convert.to)}
 		return {...state, convert}
 	},
+	C_TOGGLE_NUMBER_CONVERT: function(state, {index}) {
+		let { recipeBlocks } = state
+		let block = recipeBlocks[index]
+		if (block === void 0) {
+			return state
+		}
+		if (block.t !== 'var') {
+			throw new Error("Block is not a var : " + JSON.stringify(block))
+		}
+		let newBlock = { ...block, convert: !block.convert }
+		let newBlocks = recipeBlocks
+			.slice(0, index) // before
+			.concat([newBlock])
+			.concat(recipeBlocks.slice(index +1)) // after
+		return { ...state, recipeBlocks: newBlocks }
+	},
+	C_UPDATE_RECIPE: function(state, {recipe}) {
+		let recipeBlocks = parseRecipe(recipe)
+		return { ...state, recipeBlocks, recipe}
+	}
 }
 
 function makePermalink(state) {
 	return (
 		window.location.href.replace(/#.*/, '') // remove current hash
 		+ '#'
-		+ serializeState(state)
+		+ serialize(exportState(state))
 	)
 }
 
-function serializeState(state) {
-	let { recipe, convert }	= state
-	let data = { recipe, convert }
+function exportState(state) {
+	let { recipe, convert, recipeBlocks}	= state
+	let disabledBlocksIndexes = recipeBlocks
+		.reduce((acc, b, i) => {
+			if (b.t === 'var' && !b.convert) {
+				acc.push(i)
+			}
+			return acc
+		}, [])
+	let data = {
+		recipe,
+		convert,
+		disable: disabledBlocksIndexes.length
+			? disabledBlocksIndexes
+			: void 0
+	}
+	return data
+}
+
+function serialize(data) {
 	return base64Encode(JSON.stringify(data))
+}
+
+function unserialize(str) {
+	try {
+		return JSON.parse(base64Decode(str))
+	}
+	catch(e){
+		return false
+	}
 }
 
 var fracts = {
@@ -301,7 +352,6 @@ function parseRecipe(recipe) {
 	// So the last variables[i] does not exist
 	let undef = template.pop()
 	if (undef !== void 0) { console.error("@todo You'd better check this out") }
-	template.map(x => console.log(JSON.stringify(x, 0, ' ')))
 	return template
 }
 
@@ -319,20 +369,31 @@ let CookieConverter = window.CookieConverter = {
 }
 
 CookieConverter.create = function(_state) {
+	let hash = !!_state.hash
+	let hashData = false
+	if (hash) {
+		let serialized = window.location.hash.slice(1)
+		hashData = unserialize(serialized)
+	}
 	let state = xtend(defaultState(), _state)
+	if (hashData) {
+		// rebind if we has hash data
+		state = xtend(state, {
+			recipe: hashData.recipe || _state.recipe,
+			convert: hashData.convert || _state.convert,
+		})
+	}
+	state.recipeBlocks = parseRecipe(state.recipe)
 	let store = makeStore(state)
-	let el = selectEl(state.el)
-	Inferno.render(
-		<Provider store={store}>
-			<View />
-		</Provider>,
-		el
-	)
+	if (hashData.disable && hashData.disable.forEach) {
+		hashData.disable.forEach(x => store.dispatch(actions.toggleNumberConvert(x)))
+	}
+	renderConverter(store)
 	console.warn('@todo return an action dispatcher to this store // return wrapActions(actions, store.dispatch)')
 }
 
 CookieConverter.getHashRecipe = function(defaultRecipe) {
-	console.warn('@todo read full state from hash')
+	console.warn('This function is deprecated')
 	return defaultRecipe
 }
 
@@ -369,13 +430,9 @@ function base64Decode(str) {
 
 function inputEvt(fn, ...more) {
 	return function(evt) {
-		console.log('handling event')
-		console.log('this', this)
-		console.log('evt', evt)
-		console.log('evt.target.value', evt.target.value)
 		// Select is ok but input onInput events does not pass the <input/>
 		// as 'this' here @todo why?
-		return fn.call(/* this */ evt.target, evt.target.value, ...more)
+		return fn.call(/* this */evt.target, evt.target.value, ...more)
 	}
 }
 
@@ -384,4 +441,7 @@ function ensureNumber(n, def) {
 	return isNaN(n) ? def : n
 }
 
-
+function getLc(locale) {
+	let english = CookieConverter.i18n['en']
+	return xtend(english, CookieConverter.i18n[locale])
+}

@@ -14,7 +14,7 @@ module.exports = {
 		"cookie-converter-lc_en": appfile("js/lc/en.js")
 	},
 	output: {
-		path: "dist/dev",
+		path: "dist/cookie-converter",
 		filename: "[name].js"
 	},
 	module: {
@@ -33,19 +33,10 @@ module.exports = {
 	resolve: {
 		modulesDirectories: ['app/js','app/css','node_modules']
 	},
-	devtool: ENV === 'production' ? 'source-map' : 'inline-source-map',
-	plugins: ([
-	]).concat(ENV === 'production' ? [
-		new webpack.optimize.DedupePlugin(),
-		new webpack.optimize.OccurenceOrderPlugin(true)
-	] : []),
-	devServer: {
-		port: process.env.PORT || 8080,
-		host: '0.0.0.0',
-		colors: true,
-		inline: true,
-		// publicPath: './',
-		contentBase: './dist',
-		historyApiFallback: true,
-	},
+	devtool: void 0,
+	plugins: [
+		new webpack.optimize.OccurenceOrderPlugin(true),
+		new webpack.optimize.UglifyJsPlugin({minimize: true}),
+		new webpack.optimize.DedupePlugin()
+	],
 }
