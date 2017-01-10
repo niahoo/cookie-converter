@@ -39,4 +39,20 @@ module.exports = {
 		new webpack.optimize.DedupePlugin(),
 		new webpack.optimize.OccurenceOrderPlugin(true)
 	] : []),
+	devServer: {
+		port: process.env.PORT || 8080,
+		host: '0.0.0.0',
+		colors: true,
+		publicPath: '/',
+		contentBase: './',
+		historyApiFallback: true,
+		proxy: [
+			// OPTIONAL: proxy configuration:
+			// {
+			// 	path: '/optional-prefix/**',
+			// 	target: 'http://target-host.com',
+			// 	rewrite: req => { req.url = req.url.replace(/^\/[^\/]+\//, ''); }   // strip first path segment
+			// }
+		]
+	},
 }
