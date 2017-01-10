@@ -6,7 +6,7 @@
 	max-width: 50px;
 }
 
-.cookie-converter .converted span {
+.cookie-converter .converted span.var {
 	cursor:pointer;
 	padding:1px;
 	background:#eee;
@@ -23,7 +23,7 @@
 	border-bottom-width:2px;
 }
 
-.cookie-converter .converted .on {
+.cookie-converter .converted span.var.on {
 	background:#D6ED90;
 	border-color:#BED56A;
 	border-top-color:transparent;

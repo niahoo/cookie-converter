@@ -43,8 +43,9 @@ module.exports = {
 		port: process.env.PORT || 8080,
 		host: '0.0.0.0',
 		colors: true,
-		publicPath: '/',
-		contentBase: './',
+		inline: true,
+		// publicPath: './',
+		contentBase: './dist',
 		historyApiFallback: true,
 		proxy: [
 			// OPTIONAL: proxy configuration:
