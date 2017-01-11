@@ -14,6 +14,7 @@ function defaultState() {
 	return {
 		convert: {from:6, to:2},
 		el: '#cookie-converter',
+		hash: true,
 		lc: {},
 		locale: 'en',
 		minRecipeRows: 5,
@@ -338,7 +339,7 @@ function parseRecipe(recipe) {
 			// if not a true number, like "1.5.4", treat as text
 			let n = Number(val)
 			if (n != val)
-				return value
+				return val
 			variables.push({convert: true, n, t: 'var'})
 			return separator
 		})
@@ -369,18 +370,18 @@ let CookieConverter = window.CookieConverter = {
 }
 
 CookieConverter.create = function(_state) {
-	let hash = !!_state.hash
+	let state = xtend(defaultState(), _state)
+	let hash = !!state.hash
 	let hashData = false
 	if (hash) {
 		let serialized = window.location.hash.slice(1)
 		hashData = unserialize(serialized)
 	}
-	let state = xtend(defaultState(), _state)
 	if (hashData) {
-		// rebind if we has hash data
+		// rebind if we have hash data
 		state = xtend(state, {
-			recipe: hashData.recipe || _state.recipe,
-			convert: hashData.convert || _state.convert,
+			recipe: hashData.recipe || state.recipe,
+			convert: hashData.convert || state.convert,
 		})
 	}
 	state.recipeBlocks = parseRecipe(state.recipe)
@@ -389,7 +390,9 @@ CookieConverter.create = function(_state) {
 		hashData.disable.forEach(x => store.dispatch(actions.toggleNumberConvert(x)))
 	}
 	renderConverter(store)
-	console.warn('@todo return an action dispatcher to this store // return wrapActions(actions, store.dispatch)')
+	if (process.env.NODE_ENV !== 'production') {
+		console.warn('@todo return an action dispatcher to this store // return wrapActions(actions, store.dispatch)')
+	}
 }
 
 CookieConverter.getHashRecipe = function(defaultRecipe) {

@@ -11,8 +11,8 @@ You may read the example section below for basic documentation in French languag
 [Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and include the scripts from the `dist` directory in your page.
 
 ```html
-<script src="cookie-converter.js" type="text/javascript" charset="utf-8"></script>
-<script src="cookie-converter-lc_en.js" type="text/javascript" charset="utf-8"></script>
+<script src="cookie-converter.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cookie-converter-lc_en.min.js" type="text/javascript" charset="utf-8"></script>
 ```
 
 Then, define a container.
@@ -30,12 +30,6 @@ var cc = CookieConverter.create({
 	el: '#cookieconv',
 	locale: 'en' // tip : 'en' is in fact the defaut value, just skip it !
 })
-```
-
-It is also possible to change the locale at runtime with the setLocale method.
-
-```javascript
-cc.setLocale('fr')
 ```
 
 ### Styling
@@ -71,11 +65,12 @@ Some basic CSS is defined for you automatically to create buttons on quantities.
 
 Key             | Required | Default          | Description
 --------------- | -------- | ---------------- | ---------------------------------
-`el`            | Yes      |                  | A CSS selector targetting the application container
-`locale`        | No       | `'en'`           | The application i18n locale
-`recipe`        | No       | `''`             | A `String` containing the recipe shown at page load
-`minRecipeRows` | No       | `5`              | The minimum rows of the input recipe `textarea` element
 `convert`       | No       | `{from:6, to:2}` | A javascript object specifying the initial values for quantity convertion at page load. You must provide both `from` and `to` properties.
+`el`            | Yes      |                  | A CSS selector targetting the application container
+`hash`          | No       | `true`           | Decide if the application will read the URL hash and priorize its content. Allows permalinks.
+`locale`        | No       | `'en'`           | The application i18n locale
+`minRecipeRows` | No       | `5`              | The minimum rows of the input recipe `textarea` element
+`recipe`        | No       | `''`             | A `String` containing the recipe shown at page load
 
 ### i18n
 
@@ -104,9 +99,9 @@ var cc = CookieConverter.create({
 
 ## Example (French only ATM)
 
-[Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and open `index-fr.html` in your browser.
+[Download the repository](https://github.com/niahoo/cookie-converter/archive/master.zip) and open `dist/index.html` in your browser.
 
-Check the [source](https://github.com/niahoo/cookie-converter/blob/master/example-fr.html) for basic French documentation.
+Check its source for basic French documentation.
 
 ### Build
 
@@ -117,10 +112,11 @@ git clone https://github.com/niahoo/cookie-converter.git cconv
 cd cconv
 npm install -g webpack
 npm install
-webpack --watch
+npm run dev
 ```
 
 ## Todo
 
 * Provide bootstrap support
 * English example
+* Use webpack merge

@@ -62,8 +62,6 @@ une recette par défaut
 
 	var defaultRecipe = "Cornes de gazelle\n800 g de farine T45\n300 g de beurre\n1 blanc d'oeuf\n10 cl d'eau de fleur d'oranger\n1 pincée de sel\n\nPour la farce :\n1 kg de poudre d'amandes\n320 g de sucre en poudre\n1 cuillère à soupe de miel (liquide\n1/3 cuillère à café de muscade\n0,5 cuillère à café de cannelle\n10 g de beurre\n10 cl d'eau de fleur d'oranger\n"
 
-	var recipe = CookieConverter.getHashRecipe(defaultRecipe)
-
 	var cc = CookieConverter.create({
 		hash: true,
 
@@ -75,7 +73,7 @@ une recette par défaut
 
 		// recette affichée au démarrage, facultatif (default='')
 		// Crédits recette : http://www.marmiton.org/recettes/recette_cornes-de-gazelle_22707.aspx
-		recipe: recipe
+		recipe: defaultRecipe
 	})
 
 	// il est possible de changer la langue en utilisant setLocale(). Le fichier
