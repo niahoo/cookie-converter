@@ -26,7 +26,7 @@ module.exports = {
 			{ test: /\.css$/, loader: "style-loader!css-loader" }
 		],
 		postLoaders: [
-			{ test: /\.js$/, loader: "transform?envify" },
+			{ test: /\.js$/, loader: "transform?loose-envify" },
 		],
 	},
 	resolve: {
